@@ -9,7 +9,7 @@ current_branch=`git symbolic-ref --short -q HEAD`
 remote_default_branch='develop'
 
 echo "同步时间：${current_time}" >> $log_file
-echo "工作目录：${current_dir}" >> $log_file
+echo "工作目录：${current_path}" >> $log_file
 echo "当前分支：${current_branch}" >> $log_file
 echo -e "\n所有分支：\n`git remote -v`" >> $log_file
 echo -e "\ngit stash：\n`git stash`" >> $log_file
