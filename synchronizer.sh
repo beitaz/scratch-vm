@@ -12,8 +12,8 @@ echo "同步时间：${current_time}" >> $log_file
 echo "工作目录：${current_dir}" >> $log_file
 echo "当前分支：${current_branch}" >> $log_file
 echo "所有分支：`git remote -v`" >> $log_file
-echo -e "\ngit stash"
-`git stash` >> $log_file
+echo -e "\ngit stash" >> $log_file
+$(git stash) >> $log_file
 # git checkout $remote_default_branch >> $log_file
 # command=`git fetch upstream` >> $log_file
 # git merge upstream/$remote_default_branch
