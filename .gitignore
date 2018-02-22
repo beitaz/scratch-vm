@@ -1,6 +1,9 @@
 # Mac OS
 .DS_Store
 
+# VS Code
+.vscode
+
 # NPM
 package-lock.json
 /node_modules
@@ -20,3 +23,6 @@ npm-*
 
 # Localization
 /translations
+
+# Sync log
+sync.log
