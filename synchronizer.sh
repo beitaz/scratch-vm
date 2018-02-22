@@ -6,14 +6,15 @@ current_dir=${current_path##*/}
 current_time=`date '+%Y-%m-%d %H:%M:%S'`
 # 获取当前分支名称
 current_branch=`git symbolic-ref --short -q HEAD`
-remote_default_branch=``
+remote_default_branch='develop'
 
 echo -e "\t同步时间\t\t\t工作目录\t当前分支" >> $log_file
 echo $current_time, $current_dir, $current_branch >> $log_file
 # git remote -v >> $log_file
 git checkout develop >> $log_file
 command=`git fetch upstream` >> $log_file
-git merge upstream/develop
+git merge upstream/$remote_default_branch
+
 # echo "当前目录：$dir" >> $log_file
 # echo "当前文件：${dir##*/}" >> $log_file
 # git branch >> $log_file
