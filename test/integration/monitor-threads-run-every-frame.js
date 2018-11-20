@@ -1,13 +1,13 @@
 const path = require('path');
 const test = require('tap').test;
 const makeTestStorage = require('../fixtures/make-test-storage');
-const extract = require('../fixtures/extract');
+const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
 const VirtualMachine = require('../../src/index');
 const Thread = require('../../src/engine/thread');
 const Runtime = require('../../src/engine/runtime');
 
 const projectUri = path.resolve(__dirname, '../fixtures/default.sb2');
-const project = extract(projectUri);
+const project = readFileToBuffer(projectUri);
 
 const checkMonitorThreadPresent = (t, threads) => {
     t.equal(threads.length, 1);
@@ -55,13 +55,19 @@ test('monitor thread runs every frame', t => {
             t.equal(vm.runtime.threads.length, 0);
 
             vm.runtime._step();
-            checkMonitorThreadPresent(t, vm.runtime.threads);
-            t.assert(vm.runtime.threads[0].status === Thread.STATUS_DONE);
+            let doneThreads = vm.runtime._lastStepDoneThreads;
+            t.equal(vm.runtime.threads.length, 0);
+            t.equal(doneThreads.length, 1);
+            checkMonitorThreadPresent(t, doneThreads);
+            t.assert(doneThreads[0].status === Thread.STATUS_DONE);
 
             // Check that both are added again when another step is taken
             vm.runtime._step();
-            checkMonitorThreadPresent(t, vm.runtime.threads);
-            t.assert(vm.runtime.threads[0].status === Thread.STATUS_DONE);
+            doneThreads = vm.runtime._lastStepDoneThreads;
+            t.equal(vm.runtime.threads.length, 0);
+            t.equal(doneThreads.length, 1);
+            checkMonitorThreadPresent(t, doneThreads);
+            t.assert(doneThreads[0].status === Thread.STATUS_DONE);
             t.end();
         });
     });
@@ -103,12 +109,18 @@ test('monitor thread not added twice', t => {
             t.equal(vm.runtime.threads.length, 0);
 
             vm.runtime._step();
+            let doneThreads = vm.runtime._lastStepDoneThreads;
+            t.equal(vm.runtime.threads.length, 1);
+            t.equal(doneThreads.length, 0);
             checkMonitorThreadPresent(t, vm.runtime.threads);
             t.assert(vm.runtime.threads[0].status === Thread.STATUS_RUNNING);
             const prevThread = vm.runtime.threads[0];
 
             // Check that both are added again when another step is taken
             vm.runtime._step();
+            doneThreads = vm.runtime._lastStepDoneThreads;
+            t.equal(vm.runtime.threads.length, 1);
+            t.equal(doneThreads.length, 0);
             checkMonitorThreadPresent(t, vm.runtime.threads);
             t.equal(vm.runtime.threads[0], prevThread);
             t.end();
